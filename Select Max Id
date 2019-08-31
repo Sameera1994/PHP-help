@@ -1,0 +1,11 @@
+<?php require_once 'dbconection.php';
+
+  $sql = "SELECT id FROM table_name ORDER BY id DESC LIMIT 1";
+  $query = $connect->query($sql);
+  
+  while ($result = $query->fetch_assoc()) {
+    $max_id =  $result['id'];
+  }
+  
+?>
+
