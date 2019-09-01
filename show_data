@@ -1,0 +1,9 @@
+
+$sql = "Select * from where"
+$query = $connect->query($sql);
+
+    while ($result = $query->fetch_assoc()) {
+      $id = $result['id'];
+      echo $id;
+?>
+<?php } ?>
