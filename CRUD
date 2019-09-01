@@ -1,0 +1,302 @@
+
+
+<?php
+  
+include 'php_action/db_connect.php';
+
+$DATE = "";
+$NIC = "";
+$INVOICE_NO = "";
+$BILL_AMOUNT = "";
+$PAYMENT = "";
+$BALANCE = "";
+
+
+
+function getPosts()
+{
+  $posts[0] = $_POST['date'];
+  $posts[1] = $_POST['nic'];
+  $posts[2] = $_POST['invoice_no'];
+  $posts[3] = $_POST['bill_amount'];
+  $posts[4] = $_POST['payment'];
+  $posts[5] = $_POST['balance'];
+  return $posts;
+}
+
+
+
+
+//insert a record
+if (isset($_POST['Insert'])) {
+  $data = getPosts();
+
+if (empty($data[0]) || empty($data[1]) || empty($data[2]) || empty($data[3]) || empty($data[4])|| empty($data[5])) {
+   echo "* One or more required fields";
+}
+else{
+
+  $insert_Query ="INSERT INTO `perl_db`.`customer_payment` (`date`, `nic`, `invoice_no`, `bill_amount`,`payment`, `balance`) VALUES ('$data[0]', '$data[1]', '$data[2]', '$data[3]', '$data[4]', '$data[5]')";
+
+     
+
+     try{
+      $insert_Result = mysqli_query($connect, $insert_Query);
+      if ($insert_Result) {
+        if (mysqli_affected_rows($connect) > 0) {
+          echo "Data Inserted";
+        }
+        else{
+          echo "Data Not Inserted";
+        }
+      }
+     }
+     catch(Exception $ex){
+  echo "Error Insert".$ex->getMessage();
+}
+
+}
+
+ 
+}
+
+
+//search a record
+if (isset($_POST['Search'])) {
+
+  $data = getPosts();
+
+ 
+  $search_Query = "SELECT * FROM customer_payment WHERE invoice_no=$data[2]";
+
+
+    $search_Result = $connect->query($search_Query);
+
+  if ($search_Result) {
+    if (mysqli_num_rows($search_Result)) {
+        
+      while ($row = mysqli_fetch_array($search_Result)) {
+        $DATE = $row['date'];
+        $NIC = $row['nic'];
+        $INVOICE_NO= $row['invoice_no'];
+        $BILL_AMOUNT = $row['bill_amount'];
+        $PAYMENT = $row['payment'];
+        $BALANCE = $row['balance'];
+        
+      }
+      
+    }
+    else{
+      echo "No data for this ID";
+    }
+  }
+  else{
+    echo "Result Error";
+  }
+
+  
+}
+
+
+//delete a record
+if (isset($_POST['Delete'])) {
+
+$data = getPosts();
+
+ 
+    $delete_Query = "DELETE FROM customer_payment
+    WHERE invoice_no='$data[2]'";
+
+    try{
+      $delete_Result = mysqli_query($connect, $delete_Query);
+      if ($delete_Result) {
+        if (mysqli_affected_rows($connect) > 0) {
+          echo "Data Deleted";
+        }
+        else{
+          echo "Data Not Deleted";
+        }
+      }
+    }
+         catch(Exception $ex){
+  echo "Error Delete".$ex->getMessage();
+  }
+
+}
+
+
+//update a record
+if (isset($_POST['Update'])) {
+
+  $data = getPosts();
+
+ 
+  $update_Query = "UPDATE `customer_payment` SET `nic`='$data[1]',`invoice_no`='$data[2]',`bill_amount`='$data[3]',`payment`='$data[4]',`balance`='$data[5]' WHERE invoice_no=$data[2]";
+
+
+   try{
+      $update_Result = mysqli_query($connect, $update_Query);
+      if ($update_Result) {
+        if (mysqli_affected_rows($connect) > 0) {
+          echo "Data Updated";
+        }
+        else{
+          echo "Data Not Updated";
+        }
+      }
+    }
+         catch(Exception $ex){
+  echo "Error Update".$ex->getMessage();
+  }
+  
+} 
+
+/*header("Location: CRUD_in_php.php");*/
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+	
+<?php include("includes/header.php"); ?>
+	<title>Customer</title>
+
+</head>
+<body>
+<div class="container-fluid">
+   <div class="row">
+        <div class="col-md-12">
+		<div class="panel panel-default">
+		<div style="background-color:#E3E9E4;">
+		<div class="panel-heading">
+          
+		   <div id="invoice" style="display:block;">
+   				<center><h3><b>Customer Payment</b></h3></center>          
+  		  </div>
+		 <div class="row">
+			<div align="center">
+				<p><?php echo date('l') .' '.date('d').', '.date('Y'); ?></p>
+			</div>
+			<div align="center" id="timer"></div>
+		 </div>
+		</div>
+		</div>
+		</div>
+        </div>
+  </div>
+  	<ol class="breadcrumb">
+		  <li><a href="dashboard.php">Home/ Customer</a></li>		  
+		  <li class="active"> Customer Payment</li>
+	</ol>
+		
+    <div class="row" >    
+		<div id="content" class="col-md-12 "><br>             
+		  <div class="panel panel-info" style="background-color:#E3E9E4;">
+			<div class="panel-body">
+			<br>
+			<form class="form-horizontal" method="post" action="customer_payment.php">
+	<div class="form-group">
+    <label class="control-label col-sm-2" for="invoice_no">Invoice_No:</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="invoice_no" name="invoice_no" placeholder="Enter Invoice No" value="<?php echo $INVOICE_NO; ?>">
+    </div>
+ 	</div>
+	 <hr>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="DATE">DATE:</label>
+    <div class="col-sm-10">
+    <input type="date" class="form-control" id="date" name="date" placeholder="Enter date" value="<?php echo $DATE; ?>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="nic">NIC:</label>
+    <div class="col-sm-10"> 
+      <input type="text" class="form-control" id="nic" name="nic" placeholder="Enter NIC" value="<?php echo $NIC; ?>">
+    </div>
+  </div>
+
+    <div class="form-group">
+    <label class="control-label col-sm-2" for="bill_amount">Bill_Amount:</label>
+    <div class="col-sm-10">
+      <input type="text" class="form-control" id="bill_amount" name="bill_amount" placeholder="Enter Bill Amount" value="<?php echo $BILL_AMOUNT; ?>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="payment">Payment:</label>
+    <div class="col-sm-10"> 
+      <input type="text" class="form-control" id="payment" name="payment" placeholder="Enter Payment" value="<?php echo $PAYMENT; ?>">
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label col-sm-2" for="balance">Balance:</label>
+    <div class="col-sm-10"> 
+      <input type="text" class="form-control" id="balance" name="balance" placeholder="Enter balance" value="<?php echo $BALANCE; ?>">
+    </div>
+  </div>
+  
+ <!-- <div class="form-group"> 
+    <div class="col-sm-offset-2 col-sm-10">
+      <div class="checkbox">
+        <label><input type="checkbox"> Remember me</label>
+      </div>
+    </div>
+  </div> -->
+
+ <div class="row">
+    <div class="col-sm-3">
+      <div class="form-group"> 
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" name="Insert" class="btn btn-default">Insert</button>
+    </div>
+  </div> 
+    </div>
+
+    <div class="col-sm-3">
+      <div class="form-group"> 
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" name="Search" class="btn btn-default">Search</button>
+    </div>
+  </div>
+    </div>   
+
+    <div class="col-sm-3">
+       <div class="form-group"> 
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" name="Delete" class="btn btn-default">Delete</button>
+    </div>
+  </div>
+    </div>
+ <div class="col-sm-3">
+       <div class="form-group"> 
+    <div class="col-sm-offset-2 col-sm-10">
+      <button type="submit" name="Update" class="btn btn-default">Update</button>
+    </div>
+  </div>
+    </div>
+ 
+  </div>
+
+</form>
+			<br>
+		 </div>
+	   </div>
+    </div>
+   </div>
+</div>
+<script>setInterval(function() {
+    var currentTime = new Date ( );    
+    var currentHours = currentTime.getHours ( );   
+    var currentMinutes = currentTime.getMinutes ( );   
+    var currentSeconds = currentTime.getSeconds ( );
+    currentMinutes = ( currentMinutes < 10 ? "0" : "" ) + currentMinutes;   
+    currentSeconds = ( currentSeconds < 10 ? "0" : "" ) + currentSeconds;    
+    var timeOfDay = ( currentHours < 12 ) ? "AM" : "PM";    
+    currentHours = ( currentHours > 12 ) ? currentHours - 12 : currentHours;    
+    currentHours = ( currentHours == 0 ) ? 12 : currentHours;    
+    var currentTimeString = currentHours + ":" + currentMinutes + ":" + currentSeconds + " " + timeOfDay;
+    document.getElementById("timer").innerHTML = currentTimeString;
+}, 1000);
+</script>
+<?php include('includes/footer.php') ?>
+</body>
+</html>
