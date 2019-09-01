@@ -1,4 +1,4 @@
-
+<?php
 $sql = "Select * from where"
 $query = $connect->query($sql);
 
@@ -6,4 +6,4 @@ $query = $connect->query($sql);
       $id = $result['id'];
       echo $id;
 ?>
-<?php } ?>
+
