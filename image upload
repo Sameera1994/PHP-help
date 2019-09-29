@@ -8,3 +8,29 @@
 <!-- upload.php file -->
 
 <?php require_once 'dbconection.php'; //connect database
+
+$target_dir = "img/client/"; //image path
+$target_file = $target_dir . basename($_FILES["Image"]["name"]);
+
+$type = explode('.', $_FILES['Image']['name']);
+
+	  $type = $type[count($type)-1];		
+		$url = 'img/client/'.uniqid(rand()).'.'.$type;
+    
+		if(in_array($type, array('gif', 'jpg', 'jpeg', 'png', 'JPG', 'GIF', 'JPEG', 'PNG'))) {
+		  if(is_uploaded_file($_FILES['Image']['tmp_name'])) {			
+			  if(move_uploaded_file($_FILES['Image']['tmp_name'], $url)) {
+				
+				  $sql = "INSERT INTO user_letter_table (image) 
+				  VALUES ('$url')";
+				  $result = mysqli_query($connect,$sql);
+          echo "successfully add";
+			   }
+         
+			  else {
+				  return false;
+			  }	// /else	
+		  } // if
+		}
+
+?>
