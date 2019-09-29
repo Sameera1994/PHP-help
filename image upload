@@ -1,0 +1,10 @@
+<form action="upload.php" method="post">
+
+  Upload Image <input type="file" name="Image" id="fileToUpload">
+
+</form>
+
+
+<!-- upload.php file -->
+
+<?php require_once 'dbconection.php'; //connect database
